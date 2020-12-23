@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
+var nodemailer = require('nodemailer');
+var config = require('../config');
+var transporter = nodemailer.createTransport(config.mailer);
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'CodeDuo - A platform for sharing code.' });
@@ -15,7 +19,25 @@ router.route('/contact')
     res.render('contact', { title: 'CodeDuo - A platform for sharing code.'});
   })
   .post(function(req, res, next) {
-    res.render('thank', { title: 'CodeDuo - A platform for sharing code.'});
+    
+    
+
+    var mailOptions = {
+      from: 'CodeDuo <no-reply@codeduo.com>',
+      to: 'tanmaymohapatra17@gmail.com',
+      subject: 'You have a new message from visitor',
+      text: req.body.message,
+    }
+
+    transporter.sendMail(mailOptions, function(error, info) {
+      if(error) {
+        return console.log(error);
+      }
+      res.render('thank', { title: 'CodeDuo - A platform for sharing code.'});
+    })
+
+
+    
   });
 
 module.exports = router;
